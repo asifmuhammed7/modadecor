@@ -55,7 +55,9 @@ const verifyPayment = (details) => {
 
 const changePaymentStatus = (orderId) => {
     return new Promise((resolve, reject) => {
-        console.log(orderId); fgjff
+        console.log(orderId);
+        console.log(orderId);
+
         Order.updateOne({ _id: orderId },
             {
                 $set: {
