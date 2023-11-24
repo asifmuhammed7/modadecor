@@ -14,6 +14,6 @@ app.use('/',userRouter)
 const adminRouter = require('./routes/adminRouter')
 app.use('/admin',adminRouter)
 
-app.listen(3000,()=> console.log('Server starting'))
+app.listen(3000,()=> console.log(`Server starting at http://localhost:${3000}`))
 
     
