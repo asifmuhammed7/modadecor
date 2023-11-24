@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/admin/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i
+                                class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iPhone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <!-- Navigation links and user profile dropdown -->
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Edit Product</h2>
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <form action="/admin/updateProduct/<%= product._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validate()">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="product_title" class="form-label">Product name</label>
+                                    <input type="text" name="productName" placeholder="Type here" class="form-control"
+                                        id="productName" value="<%= product.productName %>">
+                                    <p id="productNameError"></p>
+
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_brand" class="form-label">Brand</label>
+                                    <input type="text" name="brandName" placeholder="Type here" class="form-control"
+                                        id="brandName" value="<%= product.brandName %>">
+                                </div>
+                                <div class="row gx-3">
+                                    <div class="mb-4">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select name="category" id="category" class="form-select">
+                                            <% if (product.category.isDelete) { %>
+                                                <option value="">Select</option>
+                                                <% } else { %>
+                                                    <option selected value="<%= product.category._id %>">
+                                                        <%= product.category.name %>
+                                                    </option>
+                                                    <% } %>
+                                                        <% for (let i=0; i < categories.length; i++) { %>
+                                                            <option value="<%= categories[i]._id %>" <% if
+                                                                (categories[i].name===product.category.name) { %>
+                                                                selected <% } %>>
+                                                                    <%= categories[i].name %>
+                                                            </option>
+                                                            <% } %>
+                                        </select>
+                                        <p id="categoryError"></p>
+
+
+                                    </div>
+
+
+
+                                    <div class="col-md-4  mb-3">
+                                        <label for="product_color" class="form-label">Regular Price</label>
+                                        <input type="text" name="regularPrice" placeholder="Type here"
+                                            class="form-control" id="regularPrice" value="<%= product.regularPrice %>"
+                                            required>
+                                        <p id="regularPriceError"></p>
+                                    </div>
+                                    <div class="col-md-4  mb-3">
+                                        <label for="product_size" class="form-label">Sale price</label>
+                                        <input type="text" name="salePrice" placeholder="Type here" class="form-control"
+                                            id="salePrice" value="<%= product.salePrice %>" required>
+                                        <p id="salePriceError"></p>
+                                    </div>
+                                    <div class="col-md-4  mb-3">
+                                        <label for="product_size" class="form-label">Quantity</label>
+                                        <input type="text" name="quantity" placeholder="Type here" class="form-control"
+                                            id="quantity" value="<%= product.quantity %>" required>
+                                        <p id="quantityError"></p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div> <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div>
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" id="description" name="description"
+                                        class="form-control" rows="4"><%= product.description %></textarea>
+                                    <p id="descriptionError"></p>
+                                </div>
+                            </div>
+                        </div> <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div>
+                                    <label class="form-label">Images</label>
+
+                                    <!-- Display current images -->
+                                    <% for (let i=0; i < product.image.length; i++) { %>
+                                        <img src="/admin/assets/productsImages/<%= product.image[i] %>"
+                                            alt="Image <%= i + 1 %>" class="current-image" width="25">
+                                        <% } %>
+
+                                            <!-- Input for selecting new images (multiple) -->
+                                            <input class="form-control" type="file" id="images" name="image" multiple>
+                                            <p id="imagesError"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+
+                    </form>
+                </div>
+
+            </div>
+        </section>
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script>
+        function validate() {
+            alert("Validation function called")
+
+            const productName = document.getElementById('productName');
+            const description = document.getElementById('description');
+            const brandName = document.getElementById('brandName');
+            const quantity = document.getElementById('quantity');
+            const category = document.getElementById('category');
+            const regularPrice = document.getElementById('regularPrice');
+            const salePrice = document.getElementById('salePrice');
+            const images = document.getElementById('images');
+
+            const productNameError = document.getElementById('productNameError');
+            const descriptionError = document.getElementById('descriptionError');
+            const brandNameError = document.getElementById('brandNameError');
+            const quantityError = document.getElementById('quantityError');
+            const categoryError = document.getElementById('categoryError');
+            const regularPriceError = document.getElementById('regularPriceError');
+            const salePriceError = document.getElementById('salePriceError');
+            const imagesError = document.getElementById('imagesError');
+
+            const quantityValue = quantity.value;
+            const regularPriceValue = regularPrice.value;
+            const salePriceValue = salePrice.value;
+            console.log('Product Name:', productName);
+            if (productName.value.trim() === '') {
+                productNameError.innerHTML = 'Product Name is required'
+                productNameError.style.color = 'red';
+                setTimeout(() => {
+                    productNameError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (description.value.trim() === '') {
+                descriptionError.innerHTML = 'Description is required'
+                descriptionError.style.color = 'red';
+                setTimeout(() => {
+                    descriptionError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (brandName.value.trim() === '') {
+                brandNameError.innerHTML = 'Brand Name is required'
+                brandNameError.style.color = 'red';
+                setTimeout(() => {
+                    brandNameError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (category.value.trim() === '') {
+                categoryError.innerHTML = 'Category is required'
+                categoryError.style.color = 'red';
+                setTimeout(() => {
+                    categoryError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (quantity.value.trim() === '') {
+                quantityError.innerHTML = 'Quantity is required'
+                quantityError.style.color = 'red';
+                setTimeout(() => {
+                    quantityError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (!(/^\d+$/.test(quantityValue)) || parseInt(quantityValue) <= 0) {
+                quantityError.innerHTML = 'It should be a Positive Number'
+                quantityError.style.color = 'red';
+                setTimeout(() => {
+                    quantityError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (regularPrice.value.trim() === '') {
+                regularPriceError.innerHTML = 'Regular Price is required'
+                regularPriceError.style.color = 'red';
+                setTimeout(() => {
+                    regularPriceError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (!(/^\d+$/.test(regularPriceValue)) || parseInt(regularPriceValue) <= 0) {
+                regularPriceError.innerHTML = 'It should be a Positive Number'
+                regularPriceError.style.color = 'red';
+                setTimeout(() => {
+                    regularPriceError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (salePrice.value.trim() === '') {
+                salePriceError.innerHTML = 'Sale Price is required'
+                salePriceError.style.color = 'red';
+                setTimeout(() => {
+                    salePriceError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (!(/^\d+$/.test(salePriceValue)) || parseInt(salePriceValue) <= 0) {
+                salePriceError.innerHTML = 'It should be a Positive Number'
+                salePriceError.style.color = 'red';
+                setTimeout(() => {
+                    salePriceError.innerHTML = ''
+                }, 5000)
+                return false;
+            }
+
+            if (salePrice.value >= regularPrice.value) {
+                salePriceError.innerHTML = 'Sale Price should be lesser than Regular Price';
+                salePriceError.style.color = 'red';
+                setTimeout(() => {
+                    salePriceError.innerHTML = '';
+                }, 5000);
+                return false;
+            }
+
+            // if (images.files.length === 0) {
+            //     imagesError.innerHTML = 'Image is required'
+            //     imagesError.style.color = 'red';
+            //     setTimeout(() => {
+            //         imagesError.innerHTML = ''
+            //     }, 5000)
+            //     return false;
+            // }
+
+            // if (images.files.length === 0 || images.files.length > 4) {
+            //     imagesError.innerHTML = 'Only 3 Images is allowed'
+            //     imagesError.style.color = 'red';
+            //     setTimeout(() => {
+            //         imagesError.innerHTML = ''
+            //     }, 5000)
+            //     return false;
+            // }
+
+            return true;
+
+        }
+        function updateImagePreview() {
+        const imagesInput = document.getElementById('images');
+        const currentImagesContainer = document.getElementById('currentImagesContainer');
+
+        // Clear any existing image previews
+        currentImagesContainer.innerHTML = '';
+
+        if (imagesInput.files && imagesInput.files.length > 0) {
+            for (let i = 0; i < imagesInput.files.length; i++) {
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(imagesInput.files[i]);
+                image.alt = `New Image ${i + 1}`;
+                image.className = 'new-image-preview';
+                currentImagesContainer.appendChild(image);
+            }
+        }
+    }
+
+    </script>
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/select2.min.js"></script>
+    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="assets/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>

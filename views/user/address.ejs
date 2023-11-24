@@ -1,0 +1,161 @@
+<!-- views/new-address.ejs -->
+
+<%- include('header') %>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
+            <h1>Add New Address</h1>
+            <form id="addressForm" action="/createAddress" method="POST" onsubmit="return validateForm()">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <p id="nameError" style="color: red"></p>
+            
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+                <p id="addressError" style="color: red"></p>
+            
+                <label for="district">District:</label>
+                <input type="text" id="district" name="district" required>
+                <p id="districtError" style="color: red"></p>
+            
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+                <p id="cityError" style="color: red"></p>
+            
+                <label for="pincode">Pincode:</label>
+                <input type="number" id="pincode" name="pincode" required>
+                <p id="pincodeError" style="color: red"></p>
+            
+                <label for="phone">Phone Number:</label>
+                <input type="number" id="phone" name="phone" required>
+                <p id="phoneError" style="color: red"></p>
+            
+                <button type="submit">Submit</button>
+            </form>
+            
+        </div>
+    </div>
+    <script>
+        function validateForm(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        const name = document.getElementById('name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const district = document.getElementById('district').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        const nameError = document.getElementById('nameError');
+        const addressError = document.getElementById('addressError');
+        const districtError = document.getElementById('districtError');
+        const cityError = document.getElementById('cityError');
+        const pincodeError = document.getElementById('pincodeError');
+        const phoneError = document.getElementById('phoneError');
+
+        const phoneRegex = /^[6-9]\d{9}$/;
+        const sequentialRegex = /(0123456789|123456789|234567890|9876543210|876543210|76543210|6543210|543210|43210|3210|210)/;
+
+        nameError.textContent = name === '' ? 'Please provide a name' : '';
+        addressError.textContent = address === '' ? 'Please provide an address' : '';
+        districtError.textContent = district === '' ? 'Please provide a district' : '';
+        cityError.textContent = city === '' ? 'Please provide a city' : '';
+        pincodeError.textContent =
+            pincode === ''
+                ? 'Please provide a pincode'
+                : pincode.length !== 6
+                ? 'Pincode should be 6 digits long'
+                : isNaN(pincode)
+                ? 'Pincode should be a number'
+                : pincode[0] === '0'
+                ? 'Pincode should not start with zero'
+                : '';
+        phoneError.textContent =
+            phone === ''
+                ? 'Please provide a phone number'
+                : phone.length !== 10
+                ? 'Phone number should be 10 digits long'
+                : isNaN(phone)
+                ? 'Phone number should be a number'
+                : !phone.match(phoneRegex)
+                ? 'Invalid phone number'
+                : phone.match(sequentialRegex)
+                ? 'Invalid phone number'
+                : '';
+
+        if (
+            name !== '' &&
+            address !== '' &&
+            district !== '' &&
+            city !== '' &&
+            pincode !== '' &&
+            pincode.length === 6 &&
+            !isNaN(pincode) &&
+            phone !== '' &&
+            phone.length === 10 &&
+            !isNaN(phone) &&
+            phone[0] >= '6' &&
+            phone[0] <= '9' &&
+            !phone.match(sequentialRegex)
+        ) {
+            // Submit the form programmatically
+            document.getElementById('addressForm').submit();
+        }
+    }
+
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const sequentialRegex = /(0123456789|123456789|234567890|9876543210|876543210|76543210|6543210|543210|43210|3210|210)/;
+
+    document.getElementById('addressForm').addEventListener('submit', validateForm);
+
+
+        
+    
+        document.getElementById('name').addEventListener('input', function () {
+            document.getElementById('nameError').textContent = this.value.trim() === '' ? 'Please provide a name' : '';
+        });
+    
+        document.getElementById('address').addEventListener('input', function () {
+            document.getElementById('addressError').textContent = this.value.trim() === '' ? 'Please provide an address' : '';
+        });
+    
+        document.getElementById('district').addEventListener('input', function () {
+            document.getElementById('districtError').textContent = this.value.trim() === '' ? 'Please provide a district' : '';
+        });
+    
+        document.getElementById('city').addEventListener('input', function () {
+            document.getElementById('cityError').textContent = this.value.trim() === '' ? 'Please provide a city' : '';
+        });
+    
+        document.getElementById('pincode').addEventListener('input', function () {
+            const pincodeError = document.getElementById('pincodeError');
+            pincodeError.textContent =
+                this.value.trim() === ''
+                    ? 'Please provide a pincode'
+                    : this.value.length !== 6
+                    ? 'Pincode should be 6 digits long'
+                    : isNaN(this.value)
+                    ? 'Pincode should be a number'
+                    : this.value[0] === '0'
+                    ? 'Pincode should not start with zero'
+                    : '';
+        });
+    
+        document.getElementById('phone').addEventListener('input', function () {
+            const phoneError = document.getElementById('phoneError');
+            phoneError.textContent =
+                this.value.trim() === ''
+                    ? 'Please provide a phone number'
+                    : this.value.length !== 10
+                    ? 'Phone number should be 10 digits long'
+                    : isNaN(this.value)
+                    ? 'Phone number should be a number'
+                    : this.value[0] === '0'
+                    ? 'Phone number should not start with zero'
+                    : !this.value.match(phoneRegex)
+                    ? 'Invalid phone number'
+                    : '';
+        });
+    </script>
+    
+    
+<%- include('footer') %>

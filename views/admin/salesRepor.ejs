@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report Page</title>
+    <!-- Add Bootstrap CSS and Bootstrap Datepicker CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        /* Custom styling can be added here */
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+
+        h1 {
+            color: #28a745; /* Green color for the title */
+            margin-top: 20px;
+        }
+
+        .row {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color for primary buttons */
+            border-color: #28a745;
+            height: 38px; /* Set button height to a standard value */
+        }
+
+        .btn-outline-primary {
+            color: #28a745; /* Green color for outline buttons */
+            border-color: #28a745;
+            height: 38px; /* Set button height to a standard value */
+        }
+
+        .thead-light th {
+            background-color: #28a745; /* Green color for table header */
+            color: white;
+        }
+
+        .custom-date-input {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="container">
+
+    <h1 class="mt-4">Sales Report</h1>
+
+    <!-- Custom Sales Buttons and Custom Date Input using Bootstrap Grid System -->
+    <div class="row">
+        <div class="col-md-3 mb-2">
+            <button class="btn btn-primary btn-block" onclick="showSales('monthly')">Monthly Sales</button>
+        </div>
+        <div class="col-md-3 mb-2">
+            <button class="btn btn-primary btn-block" onclick="showSales('weekly')">Weekly Sales</button>
+        </div>
+        <div class="col-md-3 mb-2">
+            <button class="btn btn-primary btn-block" onclick="showSales('yearly')">Yearly Sales</button>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="form-group">
+                <label for="startDate" class="text-white">Start Date:</label>
+                <input type="text" class="form-control" id="startDate" placeholder="mm/dd/yy" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="endDate" class="text-white">End Date:</label>
+                <input type="text" class="form-control" id="endDate" placeholder="mm/dd/yy" autocomplete="off">
+            </div>
+            <button class="btn btn-outline-primary btn-block mt-2" onclick="showSales('custom')">
+                <i class="fa fa-calendar"></i> Show Sales
+            </button>
+        </div>
+    </div>
+
+    <!-- Sales Table using Bootstrap Table -->
+    <table id="salesTable" class="table">
+        <thead class="thead-light">
+            <tr>
+                <th>SL No</th>
+                <th>Date</th>
+                <th>Order ID</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach((order, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= order.createdOn.toISOString().split('T')[0] %></td>
+                    <td><%= order._id %></td>
+                    <td><%= order.paymentMethod %></td>
+                    <td><%= order.orderStatus %></td>
+                    <td>$<%= order.grandTotal.toFixed(2) %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Add Bootstrap JS, Bootstrap Datepicker JS, and Popper.js for Bootstrap functionality -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- Add Font Awesome for the calendar icon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Initialize Bootstrap Datepicker -->
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+    
+            flatpickr('#startDate', {
+    dateFormat: 'm/d/Y',
+    maxDate: 'today',
+    position: 'auto', // or 'above' or 'below'
+    static: false, // set to true if the picker should be positioned statically
+});
+
+flatpickr('#endDate', {
+    dateFormat: 'm/d/Y',
+    maxDate: 'today',
+    position: 'auto', // or 'above' or 'below'
+    static: false, // set to true if the picker should be positioned statically
+});
+
+        });
+    
+        // Function to fetch and display sales data based on the selected type
+        async function showSales(type) {
+            console.log('Script is running...');
+    
+            let url = `/admin/reportUpdate?type=${type}`;
+    
+            // Add logic to handle custom date range if applicable
+            if (type === 'custom') {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+    
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+    
+                // Update the table with the fetched data
+                updateTable(data);
+            } catch (error) {
+                console.error('Error fetching sales data:', error);
+            }
+        }
+    
+        // Function to update the table with sales data
+        function updateTable(data) {
+            const tbody = document.getElementById('salesTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+    
+            // Populate the table with the fetched data
+            data.forEach((order, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${order.createdOn.split('T')[0]}</td>
+                        <td>${order._id}</td>
+                        <td>${order.paymentMethod}</td>
+                        <td>${order.orderStatus}</td>
+                        <td>$${order.grandTotal.toFixed(2)}</td>
+                    </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    
+    </script>
+    
+
+</body>
+</html>

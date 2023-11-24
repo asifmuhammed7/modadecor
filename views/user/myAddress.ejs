@@ -1,0 +1,98 @@
+<%- include('header') %>
+
+<section class="pt-150 pb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="dashboard-menu">
+                    <ul class="nav flex-column" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link " id="dashboard-tab"  href="/userProfile"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/orders"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link active" id="address-tab" data-bs-toggle="tab" href="/myAddress" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Wallet</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2>Billing Address</h2>
+                <div class="row">
+                    <% addresses.forEach((address, index) => { %>
+                    <div class="col-md-6 mt-30">
+                        <div class="card">
+                            <form action="">
+                                <div class="card-body">
+                                    <p>
+                                        <%= address.name %> <br>
+                                        <%= address.address %> <br>
+                                        <%= address.district %> <br>
+                                        <%= address.city %> <br>
+                                        <%= address.pincode %> <br>
+                                        <%= address.phone %>
+                                    </p>
+                                    <input type="hidden" value="<%= address._id %>" id="addressId">
+                                    <div>
+                                        <a href="/editAddress?id=<%= address._id %>" class="btn btn-primary">Edit</a>
+                                        <button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger" style="background-color: red; border-color: red;">Delete</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <div class="mt-30">
+                    <form action="/createAddress" method="get">
+                        <button type="submit" class="btn btn-primary">Create New Address</button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<script>
+    const deleteAddress = async (id) => {
+        try {
+            const response = await fetch(`/deleteAddress/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            if (response.status === 200) {
+                console.log(data.message); // Or perform any additional actions upon successful deletion
+            } else {
+                console.log('Failed to delete address');
+            }
+        } catch (error) {
+            console.error('Error deleting address:', error);
+        }
+    };
+
+    const deleteButton = document.getElementById('deleteButton');
+    deleteButton.addEventListener('click', () => {
+        const addressId = deleteButton.dataset.addressId;
+        deleteAddress(addressId);
+    });
+</script>
+
+
+<%- include('footer') %>

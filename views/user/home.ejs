@@ -1,0 +1,110 @@
+<%- include('header') %>
+
+    
+    <main class="main"> 
+        <section class="home-slider position-relative">
+            <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
+                <% banners.forEach(banner => { %>
+                    <div class="single-hero-slider single-animation-wrap">
+                        <div class="image-container" style="padding: 0 20px; box-sizing: border-box;">
+                            <img class="animated slider-1-1" src="/admin/assets/bannerImages/<%= banner.image[0] %>" alt="Banner Image">
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            <div class="slider-arrow hero-slider-1-arrow"></div>
+        </section>
+        
+        
+        
+        
+            
+        
+        <section class="product-tabs section-padding position-relative wow fadeIn animated">
+            
+            <div class="container">
+                
+                <!--End nav-tabs-->
+                <div class="tab-content wow fadeIn animated" id="myTabContent">
+                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                        <div class="row product-grid-4">
+                            <% for (let i = 0; i < product.length; i++) { %>
+
+                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                <div class="product-cart-wrap mb-30">
+                                    <div class="product-img-action-wrap">
+                                        <div class="product-img product-img-zoom">
+                                            <a href="/productDetails?id=<%-product[i]._id%>">
+                                                <img class="default-img" src="/admin/assets/productsImages/<%- product[i].image[0] %>" alt="">
+                                                <img class="hover-img" src="/admin/assets/productsImages/<%- product[i].image[0] %>" alt="">
+                                            </a>
+                                        </div>
+                                        <div class="product-action-1">
+                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                        </div>
+                                        <div class="product-badges product-badges-position product-badges-mrg">
+                                            <span class="hot">Hot</span>
+                                        </div>
+                                    </div>
+                                    <div class="product-content-wrap">
+                                        <div class="product-category">
+                                            <a href="shop-grid-right.html"><%- product[i].brandName %></a>
+                                        </div>
+                                        <h2><a href="shop-product-right.html"><%- product[i].productName %></a></h2>
+                                        <div class="rating-result" title="90%">
+                                            <span>
+                                                <span>90%</span>
+                                            </span>
+                                        </div>
+                                        <div class="product-price">
+                                            <span>₹<%- product[i].salePrice %></span>
+                                            <span class="old-price">₹<%- product[i].regularPrice %></span>
+                                        </div>
+                                        <div class="product-action-1 show">
+                                            <% const productId = product[i]._id.toString(); %>
+                                            <% if (user && user.wishlist && user.wishlist.includes(productId)) { %>
+                                                <a aria-label="Already In Wishlist" class="action-btn hover-up" style="background-color: #088178; color: white; pointer-events: none;" href="#">
+                                                    <i class="fi-rs-heart"></i>
+                                                </a>
+                                            <% } else { %>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/AddToWishlist?productId=<%= productId %>">
+                                                    <i class="fi-rs-heart"></i>
+                                                </a>
+                                            <% } %>
+                                        </div>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                        <!--End product-grid-4-->
+                    </div>
+                    <!--En tab three (New added)-->
+                </div>
+                <!--End tab-content-->
+            </div>
+        </section>
+        
+       
+        
+    </main>
+    
+<style>
+    .image-container {
+        max-width: 100%;
+        overflow: hidden;
+    }
+    .image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+    <%- include('footer') %>

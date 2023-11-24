@@ -1,0 +1,94 @@
+<%- include ('header') %>
+<style>
+    /* Custom CSS for centering the card content */
+    .center-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Center vertically on the viewport height */
+    }
+</style>
+<div class="container-fluid">
+    <div class="row center-content"> <!-- Apply the centering style here -->
+        <div class="col-md-6">
+            <div class="card" style="height: 250px;"> <!-- Adjust the height as needed -->
+                <div class="card-body text-center">
+                    <h2 class="card-title">OTP Verification</h2>
+                    
+                    <form id="verificationForm" action="otp" method="POST" onsubmit="return validate()">
+                        <div class="form-group">
+                            <label for="otp">Enter OTP:</label>
+                            <input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
+                            <p id="otpError"></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="verifyButton">Verify OTP</button>
+                    </form>
+                    <div id="timer" class="mt-3">Time Left: <span id="time">60</span> seconds</div>
+                    <div id="otpOption" class="mt-3" style="display: none;">
+                        <p>Time's up! You can <a href="otp">resend OTP</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% if (errMessage){%>
+        <div class="alert alert-danger text-center mt-5" role="alert">
+            <%- errMessage %>
+        </div>
+        <%}%>
+</div>
+<script src="js/otpValidation.js"></script>
+<script>
+    // Timer for OTP validation
+    let timeLeft = 60; // Set the initial time in seconds
+
+    function updateTimer() {
+        document.getElementById("time").textContent = timeLeft;
+        if (timeLeft === 0) {
+            // Time's up, disable the "Verify OTP" button
+            document.getElementById("verifyButton").disabled = true;
+            // Display the OTP option
+            document.getElementById("timer").style.display = "none";
+            document.getElementById("otpOption").style.display = "block";
+        } else {
+            timeLeft--;
+            setTimeout(updateTimer, 1000); // Update the timer every second
+        }
+    }
+
+    // Start the timer
+    updateTimer();
+</script>
+<script>
+    async function verifyUser() {
+        const otp = document.getElementById('otp').value;
+        const response = await fetch('/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ otp: otp })
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            window.location.href = '/login';
+        } else {
+            const errorElement = document.getElementById('otpError');
+            errorElement.textContent = responseData.error;
+
+            setTimeout(() => {
+                errorElement.textContent = '';
+            }, 5000);
+        }
+    }
+
+    document.getElementById('verificationForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        verifyUser();
+    });
+</script>
+
+
+<%- include ('footer') %>

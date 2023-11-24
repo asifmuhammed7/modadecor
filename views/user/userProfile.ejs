@@ -1,0 +1,193 @@
+<%- include('header') %>
+
+<section class="pt-150 pb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="dashboard-menu">
+                    <ul class="nav flex-column" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="/userProfile" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/orders"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="address-tab"  href="/myAddress" ><i class="fi-rs-marker mr-10"></i>My Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-detail-tab"  href="/wallet" ><i class="fi-rs-user mr-10"></i>Wallet</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="tab-content dashboard-content">
+                            <div class="card-body">
+                                <form method="post" name="enq" action="/updateUser" onsubmit="return validateForm()" enctype="multipart/form-data">
+                                    <div class="form-group col-md-12">
+                                        <img src="/admin/assets/profileImages/<%= user.profileImage %>" id="profilePhoto" alt="Profile Photo" style="width: 100px; height: 100px; border-radius: 50%;">
+                                        <br>
+                                    </div>
+                                   
+                                    <div class="row">
+                                        <% if (error) { %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= error %>
+                                            </div>
+                                        <% } %>
+                                        <div class="form-group col-md-12">
+                                            <label>UserName <span class="required"></span></label>
+                                            <input required="" class="form-control square" name="dname" type="text" value="<%= user.name %>" >
+                                            <p id="dnameError" style="color: red"></p>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Email Address <span class="required"></span></label>
+                                            <input required="" class="form-control square" name="email" type="email" value="<%= user.email %>">
+                                            <p id="emailError" style="color: red"></p>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Mobile Number <span class="required"></span></label>
+                                            <input required="" class="form-control square" name="mobile" type="tel" value="<%= user.mobile %>" >
+                                            <p id="mobileError" style="color: red"></p>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label for="profileImage">Profile Photo:</label>
+
+                                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
+                                            <p id="profileImageError" style="color: red"></p>
+    
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <button type="button" class="btn btn-primary" id="editButton" onclick="enableEdit()">Edit</button>
+                                            <button type="submit" class="btn btn-primary" id="updateButton" style="display: none;">Update</button>
+                                        </div>
+                                    </div>
+                                </form>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input');
+        const profileImageInput = document.getElementById('profileImage');
+
+        inputs.forEach(input => {
+            if (input.getAttribute('name') !== 'profileImage') {
+                input.setAttribute('readonly', true);
+            }
+        });
+
+        profileImageInput.style.display = 'none';
+
+        function enableEdit() {
+            inputs.forEach(input => {
+                input.removeAttribute('readonly');
+            });
+            profileImageInput.style.display = 'block';
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('updateButton').style.display = 'block';
+        }
+
+        document.getElementById('editButton').addEventListener('click', enableEdit);
+
+        const dnameInput = document.forms["enq"]["dname"];
+        const emailInput = document.forms["enq"]["email"];
+        const mobileInput = document.forms["enq"]["mobile"];
+
+        const dnameError = document.getElementById('dnameError');
+        const emailError = document.getElementById('emailError');
+        const mobileError = document.getElementById('mobileError');
+
+        function validateDname() {
+            const dnameValue = dnameInput.value.trim();
+            dnameError.textContent = dnameValue === '' ? 'Please provide a username' : '';
+        }
+
+        function validateEmail() {
+            const emailValue = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            emailError.textContent = emailValue === '' ? 'Please provide an email' : !emailValue.match(emailRegex) ? 'Invalid email address' : '';
+        }
+
+        function validateMobile() {
+            const mobileValue = mobileInput.value.trim();
+            const mobileRegex = /^[6-9]\d{9}$/;
+            const allSameDigits = /^(\d)\1+$/;
+            const firstDigit = mobileValue.substring(0, 1);
+
+            if (mobileValue === '') {
+                mobileError.textContent = 'Please provide a mobile number';
+            } else if (!mobileValue.match(mobileRegex)) {
+                mobileError.textContent = 'Not a valid number';
+            } else if ((firstDigit < 5 && parseInt(mobileValue) === 0)) {
+                mobileError.textContent = 'Not a valid number';
+            } else if (firstDigit < 5 && mobileValue.match(allSameDigits)) {
+                mobileError.textContent = 'Not a valid number';
+            } else {
+                mobileError.textContent = '';
+            }
+        }
+
+        dnameInput.addEventListener('input', validateDname);
+        emailInput.addEventListener('input', validateEmail);
+        mobileInput.addEventListener('input', validateMobile);
+
+        function validateForm() {
+            const dnameValue = dnameInput.value.trim();
+            const emailValue = emailInput.value.trim();
+            const mobileValue = mobileInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const mobileRegex = /^[6-9]\d{9}$/;
+            const allSameDigits = /^(\d)\1+$/;
+            const firstDigit = mobileValue.substring(0, 1);
+
+            dnameError.textContent = dnameValue === '' ? 'Please provide a username' : '';
+            emailError.textContent = emailValue === '' ? 'Please provide an email' : !emailValue.match(emailRegex) ? 'Invalid email address' : '';
+
+            if (mobileValue === '') {
+                mobileError.textContent = 'Please provide a mobile number';
+            } else if (!mobileValue.match(mobileRegex)) {
+                mobileError.textContent = 'Enter a valid number';
+            } else if ((firstDigit < 5 && parseInt(mobileValue) === 0)) {
+                mobileError.textContent = 'The first digit should be greater than or equal to 5';
+            } else if (firstDigit < 5 && mobileValue.match(allSameDigits)) {
+                mobileError.textContent = 'Mobile number should not have all the same digits and the first digit should be greater than or equal to 5';
+            } else {
+                mobileError.textContent = '';
+            }
+
+            if (dnameValue !== '' && emailValue.match(emailRegex) && mobileValue.match(mobileRegex) && !(firstDigit < 5 && mobileValue.match(allSameDigits))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        document.forms["enq"].addEventListener('submit', function (event) {
+            if (!validateForm()) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+
+
+<%- include('footer') %>

@@ -1,0 +1,157 @@
+
+<%- include('header') %>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6">
+        <h1>Edit Address</h1>
+        <form id="addressForm" action="/updateAddress/<%= address._id %>" method="POST" onsubmit="return validateForm()">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="<%= address.name %>" required>
+            <p id="nameError" style="color: red"></p>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="<%= address.address %>" required>
+            <p id="addressError" style="color: red"></p>
+
+            <label for="district">District:</label>
+            <input type="text" id="district" name="district" value="<%= address.district %>" required>
+            <p id="districtError" style="color: red"></p>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" value="<%= address.city %>" required>
+            <p id="cityError" style="color: red"></p>
+
+            <label for="pincode">Pincode:</label>
+            <input type="number" id="pincode" name="pincode" value="<%= address.pincode %>" required>
+            <p id="pincodeError" style="color: red"></p>
+
+            <label for="phone">Phone Number:</label>
+            <input type="number" id="phone" name="phone" value="<%= address.phone %>" required>
+            <p id="phoneError" style="color: red"></p>
+
+            <input type="hidden" name="addressId" value="<%= address._id %>">
+
+            <button type="submit">Update Address</button>
+        </form>
+
+    </div>
+</div>
+
+   
+    
+    
+<%- include('footer') %>
+
+<script>
+    function validateForm() {
+        const name = document.getElementById('name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const district = document.getElementById('district').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        const nameError = document.getElementById('nameError');
+        const addressError = document.getElementById('addressError');
+        const districtError = document.getElementById('districtError');
+        const cityError = document.getElementById('cityError');
+        const pincodeError = document.getElementById('pincodeError');
+        const phoneError = document.getElementById('phoneError');
+
+        const phoneRegex = /^[6-9]\d{9}$/;
+
+        nameError.textContent = name === '' ? 'Please provide a name' : '';
+        addressError.textContent = address === '' ? 'Please provide an address' : '';
+        districtError.textContent = district === '' ? 'Please provide a district' : '';
+        cityError.textContent = city === '' ? 'Please provide a city' : '';
+        pincodeError.textContent =
+            pincode === ''
+                ? 'Please provide a pincode'
+                : pincode.length !== 6
+                ? 'Pincode should be 6 digits long'
+                : isNaN(pincode)
+                ? 'Pincode should be a number'
+                : pincode[0] === '0'
+                ? 'Pincode should not start with zero'
+                : '';
+        phoneError.textContent =
+            phone === ''
+                ? 'Please provide a phone number'
+                : phone.length !== 10
+                ? 'Phone number should be 10 digits long'
+                : isNaN(phone)
+                ? 'Phone number should be a number'
+                : phone[0] === '0'
+                ? 'Not a valid number'
+                : !phone.match(phoneRegex)
+                ? 'Invalid phone number'
+                : '';
+
+        if (
+            name !== '' &&
+            address !== '' &&
+            district !== '' &&
+            city !== '' &&
+            pincode !== '' &&
+            pincode.length === 6 &&
+            !isNaN(pincode) &&
+            phone !== '' &&
+            phone.length === 10 &&
+            !isNaN(phone) &&
+            phone[0] !== '0' &&
+            pincode[0] !== '0'
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const phoneRegex = /^[6-9]\d{9}$/;
+
+    document.getElementById('name').addEventListener('input', function () {
+        document.getElementById('nameError').textContent = this.value.trim() === '' ? 'Please provide a name' : '';
+    });
+
+    document.getElementById('address').addEventListener('input', function () {
+        document.getElementById('addressError').textContent = this.value.trim() === '' ? 'Please provide an address' : '';
+    });
+
+    document.getElementById('district').addEventListener('input', function () {
+        document.getElementById('districtError').textContent = this.value.trim() === '' ? 'Please provide a district' : '';
+    });
+
+    document.getElementById('city').addEventListener('input', function () {
+        document.getElementById('cityError').textContent = this.value.trim() === '' ? 'Please provide a city' : '';
+    });
+
+    document.getElementById('pincode').addEventListener('input', function () {
+        const pincodeError = document.getElementById('pincodeError');
+        pincodeError.textContent =
+            this.value.trim() === ''
+                ? 'Please provide a pincode'
+                : this.value.length !== 6
+                ? 'Pincode should be 6 digits long'
+                : isNaN(this.value)
+                ? 'Pincode should be a number'
+                : this.value[0] === '0'
+                ? 'Pincode should not start with zero'
+                : '';
+    });
+
+    document.getElementById('phone').addEventListener('input', function () {
+        const phoneError = document.getElementById('phoneError');
+        phoneError.textContent =
+            this.value.trim() === ''
+                ? 'Please provide a phone number'
+                : this.value.length !== 10
+                ? 'Phone number should be 10 digits long'
+                : isNaN(this.value)
+                ? 'Phone number should be a number'
+                : this.value[0] === '0'
+                ? 'Not a valid dnumber'
+                : !this.value.match(phoneRegex)
+                ? 'Invalid phone number'
+                : '';
+    });
+</script>

@@ -1,0 +1,105 @@
+<%- include('header') %>
+
+<section class="pt-150 pb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="dashboard-menu">
+                    <ul class="nav flex-column" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link " id="dashboard-tab"  href="/userProfile"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="/orders"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="/track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="address-tab"  href="/myAddress" ><i class="fi-rs-marker mr-10"></i>My Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Wallet</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="card-body col-lg-6" >
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Total</th>
+                                    <th>Payment Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <!--  -->
+                            <tbody>
+                                <% orders.forEach(function(order) { %>
+                                    <tr>
+                                        <td class="order-id-cell">
+                                            <%= order._id %>
+                                        </td>
+                                        <td class="name-cell">
+                                            <%= order.user.name %>
+                                        </td>
+                                        <td class="email-cell">
+                                            <%= order.user.email %>
+                                        </td>
+                                        <td class="total-cell">
+                                            <%= order.grandTotal %>
+                                        </td>
+                                        <td class="payment-method-cell">
+                                            <%= order.paymentMethod %>
+                                        </td>
+                                        <td class="status-cell">
+                                            <span id="orderStatus" class="badge rounded-pill alert-success text-success"><%= order.orderStatus %></span>
+                                        </td>
+                                        
+                                        <td class="date-cell">
+                                            <%= order.createdOn.toDateString() %>
+                                        </td>
+                                        <td class="action-cell">
+                                            <!-- Details Button Link to Another Page -->
+                                            <a href="/orderDet?id=<%= order._id %>&user=<%= user %>" class="btn btn-primary">Details</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                            
+                            
+                            
+                            
+                        </table>
+    
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="/orders?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
+        
+    </div>
+</section>
+
+<%- include('footer') %>

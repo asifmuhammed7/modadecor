@@ -1,0 +1,278 @@
+<%- include ('header') %>
+
+    <!--================login_part Area =================-->
+    <section class="login_part padding_top">
+        <div class="container mt-5">
+            <div class="row justify-content-center mt-5 pt-5">
+                <div class="col-lg-6 col-md-6">
+                    <h3 class="mt-5"><br> </h3>
+                    <div class="login_part_form mt-5">
+                        <div class="login_part_form_iner">
+                            <% if (errMessage) { %>
+                                <div class="alert alert-danger">
+                                    <%= errMessage %>
+                                </div>
+                                <% } %>
+                                <form class="row contact_form" action="/register" method="post" onsubmit="return validate()">
+                                    <div class="col-md-12 form-group p_star">
+                                            <input type="text" class="form-control" id="name" name="name" value=""
+                                                placeholder="Username">
+                                            <p id="nameError" style="color: red;"></p>
+                                        </div>
+                                        <div class="col-md-12 form-group p_star">
+                                            <input type="text" class="form-control" id="email" name="email" value=""
+                                                placeholder="Email">
+                                            <p id="emailError" style="color: red;"></p>
+                                        </div>
+                                        <div class="col-md-12 form-group p_star">
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility()">
+                                                    <i class="fa fa-eye" id="toggleIcon"></i>
+                                                </button>
+                                            </div>
+                                            <p id="passwordError" style="color: red;"></p>
+                                        </div>
+                                        
+                                        
+                                        <div class="col-md-12 form-group p_star">
+                                            <input type="" class="form-control" id="mobile" name="mobile" value=""
+                                                placeholder="mobile">
+                                            <p id="mobileError" style="color: red;" ></p>
+                                        </div>
+                                        <div class="col-md-12 form-group">
+
+                                            <button type="submit" value="submit" class="btn_3">
+                                                Sign in
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Add a link for existing users -->
+                                    <div class="col-md-12">
+                                        <p>For existing users, <a href="/login">click here</a> to log in.</p>
+                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5">
+        </div>
+        <div></div>
+    </section>
+
+    <!--================login_part end =================-->
+
+    <!--validation-->
+    <!-- <script src="js/userRegisteration.js"></script> -->
+
+    <script>
+        function validate() {
+
+// Input fields
+const name = document.getElementById('name')
+const email = document.getElementById('email')
+const password = document.getElementById('password')
+const mobile = document.getElementById('mobile')
+
+// Error fields
+const nameError = document.getElementById('nameError')
+const emailError = document.getElementById('emailError')
+const passwordError = document.getElementById('passwordError')
+const mobileError = document.getElementById('mobileError');
+
+// Regular expressions  
+const nameRegex = /^[A-Z]/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail+\.[a-zA-Z]{3}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+const mobileRegex = /^[6-9]\d{9}$/;
+const allSameDigits = /^(\d)\1+$/;
+
+// Name field
+if (name.value.trim() === '') {
+   nameError.innerHTML = 'Field is required'
+   setTimeout(() => {
+      nameError.innerHTML = ''
+   }, 5000)
+   return false;
+}
+if(!nameRegex.test(name.value)){
+   nameError.innerHTML = 'First letter should be capital'
+   setTimeout(()=>{
+      nameError.innerHTML = ''
+   },5000)
+   return false;
+}
+
+// Email field   
+if (email.value.trim() === '') {
+   emailError.innerHTML = 'Field is required'
+   setTimeout(() => {
+      emailError.innerHTML = ''
+   }, 5000)
+   return false;
+}
+if (!emailRegex.test(email.value)) {
+   emailError.innerHTML = "Please enter a valid email"
+   setTimeout(() => {
+      emailError.innerHTML = ''
+   }, 5000);
+   return false;
+}
+
+// Password field
+if (password.value.trim() === '') {
+   passwordError.innerHTML = 'Field is required'
+   setTimeout(() => {
+      passwordError.innerHTML = ''
+   }, 5000)
+   return false;
+}
+if (!passwordRegex.test(password.value)) {
+   passwordError.innerHTML = "Please enter a strong password"
+   setTimeout(() => {
+      passwordError.innerHTML = ''
+   }, 5000);
+   return false;
+}
+
+// Mobile field
+if (mobile.value.trim() === '') {
+   mobileError.innerHTML = 'Field is required'
+   setTimeout(() => {
+      mobileError.innerHTML = ''
+   }, 5000)
+   return false;
+}
+
+if(!mobileRegex.test(mobile.value)){
+   mobileError.innerHTML = 'Please enter a valid number'
+   setTimeout(()=>{
+      mobileError.innerHTML = ''
+   },5000)
+   return false;
+}
+
+if (mobile.value.match(allSameDigits) && parseInt(mobile.value) < 5555555555) {
+   mobileError.innerHTML = 'Not a valid number';
+   setTimeout(()=>{
+      mobileError.innerHTML = ''
+   },5000)
+   return false;
+}
+
+return true;
+}
+
+function validateName() {
+        const name = document.getElementById('name');
+        const nameError = document.getElementById('nameError');
+        const nameRegex = /^[A-Z]/;
+        if (name.value.trim() === '') {
+            nameError.textContent = 'Field is required';
+            return false;
+        }
+        if (!nameRegex.test(name.value)) {
+            nameError.textContent = 'First letter should be capital';
+            return false;
+        }
+        nameError.textContent = '';
+        return true;
+    }
+
+    function validateEmail() {
+        const email = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail+\.[a-zA-Z]{3}$/;
+        if (email.value.trim() === '') {
+            emailError.textContent = 'Field is required';
+            return false;
+        }
+        if (!emailRegex.test(email.value)) {
+            emailError.textContent = 'Please enter a valid email';
+            return false;
+        }
+        emailError.textContent = '';
+        return true;
+    }
+
+    function validatePassword() {
+        const password = document.getElementById('password');
+        const passwordError = document.getElementById('passwordError');
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (password.value.trim() === '') {
+            passwordError.textContent = 'Field is required';
+            return false;
+        }
+        if (!passwordRegex.test(password.value)) {
+            passwordError.textContent = 'Password must contain at least 8 characters, including uppercase and lowercase letters, and numbers.';            return false;
+        }
+        passwordError.textContent = '';
+        return true;
+    }
+
+    function validateMobile() {
+        const mobile = document.getElementById('mobile');
+        const mobileError = document.getElementById('mobileError');
+        const mobileRegex = /^[6-9]\d{9}$/;
+        const allSameDigits = /^(\d)\1+$/;
+        const firstDigit = mobile.value.substring(0, 1);
+
+        if (mobile.value.trim() === '') {
+            mobileError.textContent = 'Field is required';
+            return false;
+        } else if (!mobileRegex.test(mobile.value)) {
+            mobileError.textContent = 'Not a valid number';
+            return false;
+        } else if (firstDigit < 5 && mobile.value.match(allSameDigits)) {
+            mobileError.textContent = 'Not a valid number';
+            return false;
+        }
+        mobileError.textContent = '';
+        return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const mobileInput = document.getElementById('mobile');
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const mobileError = document.getElementById('mobileError');
+
+        nameInput.addEventListener('input', validateName);
+        nameInput.addEventListener('focusout', validateName);
+        emailInput.addEventListener('input', validateEmail);
+        emailInput.addEventListener('focusout', validateEmail);
+        passwordInput.addEventListener('input', validatePassword);
+        passwordInput.addEventListener('focusout', validatePassword);
+        mobileInput.addEventListener('input', validateMobile);
+        mobileInput.addEventListener('focusout', validateMobile);
+    });
+
+
+
+    function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+
+
+    </script>
+
+
+    <%- include('footer') %>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      height: auto;
+    }
+
+    header h1 {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    header p {
+      margin: 0;
+      color: #777;
+    }
+
+    section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    section div {
+      width: 48%;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    footer {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    footer div {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+  </style>
+  <title>Invoice</title>
+</head>
+<body>
+  <header>
+    <!-- <img src="/admin/assets/imgs/theme/default.svg" alt="Company Logo"> -->
+    <h1>ModaDecor</h1>
+    <p>1234 Main St, Cityville, Country</p>
+    <p>Phone: +123 456 7890 | Email: info@yourcompany.com</p>
+  </header>
+
+  <section>
+    <div>
+      <h2>Billing Information</h2>
+      <p><%= client.selectedAddress.name %></p>
+      <p><%= client.selectedAddress.address %> </p>
+      <p><%= client.selectedAddress.city %> </p>
+      <p><%= client.selectedAddress.district %> </p>
+      <p><%= client.selectedAddress.pincode %> </p>
+      <p>Email: <%= client.user.email %></p>
+      <p>Phone: <%= client.selectedAddress.phone %></p>
+    </div>
+
+    <div>
+      <h2>Invoice Details</h2>
+      <p>Invoice #: <%= information.number %></p>
+      <p>Date: <%= information.date %></p>
+    </div>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(product => { %>
+        <tr>
+          <td><%= product.description %></td>
+          <td><%= product.quantity %></td>
+          <td>Rs. <%= product.price.toFixed(2) %></td>
+          <td>Rs. <%= product.subtotal.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <footer>
+    <div>
+      <h2>Total</h2>
+      <p>Discount: Rs. <%= DiscountedTotal.toFixed(2) %></p>
+      <p>Grand Total: Rs. <%= Total.toFixed(2) %></p>
+    </div>
+  </footer>
+</body>
+</html>

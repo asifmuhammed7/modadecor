@@ -1,0 +1,84 @@
+<%- include('header') %>
+
+<main class="main"> 
+    <section class="home-slider position-relative pt-50">
+        <!-- Your existing slider content -->
+    </section>
+
+    <section class="product-tabs section-padding position-relative wow fadeIn animated">
+        <div class="container">
+            <div class="row">
+                <!-- Filter Options on the Left -->
+                <div class="col-lg-3">
+                    <div class="filter-box">
+                        <div class="filter-options">
+                            <form action="/search" method="get">
+                                <input type="text" id="q" hidden name="q" placeholder="Search for items..." value="<%= searchQuery %>">
+
+                                <!-- Add dropdown for Category -->
+                                <label for="category">Category:</label>
+                                <select name="category" id="category">
+                                    <option value="">All Categories</option>
+                                    <% for (let i = 0; i < Category.length; i++) { %>
+                                        <option value="<%- Category[i]._id %>"><%- Category[i].name %></option>
+                                    <% } %>
+                                </select>
+                                
+                                <!-- Add dropdown for Price Range -->
+                                <label for="priceRange">Price Range:</label>
+                                <select name="priceRange" id="priceRange">
+                                    <option value="">All Products</option>
+                                    <option value="1000">Up to 1000</option>
+                                    <option value="2000">Up to 2000</option>
+                                    <option value="3000">Up to 3000</option>
+                                    <option value="4000">Up to 4000</option>
+                                </select>
+                                
+                                <button type="submit">Apply Filters</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Grid on the Right -->
+                <div class="col-lg-9">
+                    <div class="tab-content wow fadeIn animated" id="myTabContent">
+                        <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                            <div class="row product-grid-3">
+                                <% for (let i=0; i < product.length; i++) { %>
+                                    <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                        <div class="product-cart-wrap mb-15" style="max-height: 350px; overflow: hidden;">
+                                            <div class="product-img-action-wrap">
+                                                <div class="product-img product-img-zoom">
+                                                    <a href="/productDetails?id=<%- product[i]._id %>">
+                                                        <img class="default-img"
+                                                            src="/admin/assets/productsImages/<%- product[i].image[0] %>"
+                                                            alt="" style="max-height: 80%; max-width: 90%;">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="product-content-wrap">
+                                                <h2 class="product-name"><a href="shop-product-right.html"><%- product[i].productName %></a></h2>
+
+                                                <div class="product-price">
+                                                    <span>₹<%- product[i].salePrice %></span>
+                                                    <span class="old-price">₹<%- product[i].regularPrice %></span>
+                                                </div>
+                                                <div class="product-action-1 show">
+                                                    <a aria-label="Add To Cart" class="action-btn hover-up"
+                                                        href="/addToCart"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('footer') %>

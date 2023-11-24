@@ -1,0 +1,502 @@
+<%- include ('header') %>
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="home" rel="nofollow">Home</a>
+                    <span></span> Shop
+                    <span></span> Checkout
+                </div>
+            </div>
+        </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Billing Address</h2>
+                        <% addresses.forEach((address, index)=> { %>
+                            <div id="card-container justify-content-center align-item-center mt-30">
+                                <form action="">
+                                    <div class="card">
+                                        <div class="form-check">
+                                            <input class="form-check-input green-radio" type="radio"
+                                                name="selectedAddress" id="address<%= index %>" value="<%= index %>"
+                                                data-address-id="<%= address._id %>">
+                                        </div>
+                                        <p>
+                                            <%= address.name %> <br>
+                                                <%= address.address %> <br>
+                                                    <%= address.district %> <br>
+                                                        <%= address.city %> <br>
+                                                            <%= address.pincode %> <br>
+                                                                <%= address.phone %>
+                                        </p>
+                                        <input type="hidden" value="<%= address._id %>" id="addressId">
+                                    </div>
+                                </form>
+                            </div>
+                            <% }); %>
+                                <div class="mt-30">
+                                    <form action="addAddress" method="get" >
+                                        <button type="submit">Create New Address</button>
+                                    </form>
+                                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order_review">
+                            <div class="mb-20">
+                                <h4>Your Orders</h4>
+                            </div>
+                            <% if (cart.length> 0) { %>
+                                <div class="table-responsive order_table text-center">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2">Product</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let subTotal=0 %>
+                                                <% for (let i=0; i < cart.length; i++) { %>
+                                                    <% const item=cart[i] %>
+                                                        <% if (item.product) { %>
+                                                            <tr class="cart-item"
+                                                                data-product-id="<%= item.product._id %>">
+                                                                <td class="image product-thumbnail"><img
+                                                                        src="/admin/assets/productsImages/<%= item.product.image[0] %>"
+                                                                        alt="#"></td>
+                                                                <td>
+                                                                    <h5><a href="shop-product-full.html">
+                                                                            <%= item.product.brandName %>
+                                                                        </a></h5> <span class="product-qty">x
+                                                                        <%=item.quantity %>
+                                                                    </span>
+                                                                </td>
+                                                                <td class="product-price">
+                                                                    <%=item.product.salePrice %>
+                                                                </td>
+                                                            </tr>
+                                                            <% subTotal +=item.product.salePrice * item.quantity %>
+                                                                <% } %>
+                                                                    <% } %>
+                                                                        <tr>
+                                                                            <th>Subtotal</th>
+                                                                            <td class="product-subtotal" colspan="2">
+                                                                                <%= subTotal %>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr id="discountedTotalRow"
+                                                                            style="display: none;">
+                                                                            <th>Discounted Total</th>
+                                                                            <td class="product-subtotal" colspan="2"
+                                                                                id="discountedTotal">
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Shipping</th>
+                                                                            <td colspan="2"><em>Free Shipping</em></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Total</th>
+                                                                            
+                                                                                <td class="product-subtotal" colspan="2" id="subtotalElement">
+                                                                                    <span class="font-xl text-brand fw-900" id="subtotalValue" ><%= subTotal %></span>
+                                                                                </td>
+                                                                            
+                                                                            
+                                                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+                                    <div class="total-amount">
+                                        <div class="left">
+                                            <div class="coupon">
+                                                <form action="#" target="_blank">
+                                                    <div class="form-row row justify-content-center">
+                                                        <div class="form-group col-lg-6">
+                                                            <div class="custom-dropdown">
+                                                                <select class="form-control font-medium"
+                                                                    id="couponDropdown" name="Coupon">
+                                                                    <option value="">Select a Coupon</option>
+                                                                    <% if (coupons.length===0) { %>
+                                                                        <option disabled>No available coupons</option>
+                                                                        <% } else { %>
+                                                                            <% coupons.forEach(function(coupon) { %>
+                                                                                <option value="<%= coupon._id %>">
+                                                                                    <%= coupon.name %>
+                                                                                </option>
+                                                                                <% }); %>
+                                                                                    <% } %>
+                                                                </select>
+                                                                <div class="coupon-details" id="couponDetails">
+                                                                    <!-- Coupon details will be displayed here -->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-lg-6">
+                                                            <button type="button" class="btn btn-sm"
+                                                                id="applyCouponBtn"><i
+                                                                    class="fi-rs-label mr-10"></i>Apply</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                        <div class="payment_method">
+                            <div class="mb-25">
+                                <h5>Payment</h5>
+                            </div>
+                            <div class="payment_option">
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required="" type="radio" name="paymentMethod"
+                                        id="exampleRadios3" value="COD" checked>
+                                    <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse"
+                                        data-target="" aria-controls="bankTranfer">COD</label>
+                                </div>
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required="" type="radio" name="paymentMethod"
+                                        id="exampleRadios4" value="OnlinePayment">
+                                    <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse"
+                                        data-target="" aria-controls="onlinePayment">Online Payment</label>
+                                </div>
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required="" type="radio" name="paymentMethod"
+                                        id="exampleRadios5" value="Wallet">
+                                    <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse"
+                                        data-target="" aria-controls="wallet">Wallet</label>
+                                </div>
+                            </div>
+
+                        </div>
+                        <button class="btn btn-fill-out btn-block mt-30" id="placeOrderButton">Place
+                            Order</button>
+                        <div id="error-message" class="alert alert-danger" style="display: none;">
+
+                        </div>
+                        <input type="hidden" id="cartData" name="cart" value='<%= JSON.stringify(cart) %>'>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal" tabindex="-1" role="dialog" id="addressModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Warning</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Please select an address before placing the order.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let updatedSubtotal = <%= subTotal %>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const placeOrderButton = document.getElementById("placeOrderButton");
+
+            if (placeOrderButton) {
+                placeOrderButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    placeOrder();
+                });
+            }
+
+            async function placeOrder() {
+                try {
+
+                    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+
+                    if (!selectedAddress) {
+                        const modal = new bootstrap.Modal(document.getElementById('addressModal'));
+                        modal.show();
+                        return;
+                    }
+
+
+                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                    const subtotalElement = document.getElementById('subtotalValue');
+                    const discountedTotalElement = document.getElementById('discountedTotal').innerHTML;
+    console.log('Discounted Total Element:', discountedTotalElement);
+
+         
+        const subtotal = updatedSubtotal
+        
+                    const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').getAttribute('data-address-id');
+                    console.log(selectedAddressId);
+
+
+                    const cartItems = document.querySelectorAll('.cart-item');
+                    const products = [];
+
+                    cartItems.forEach(item => {
+                        const productId = item.getAttribute('data-product-id');
+                        const productQty = parseInt(item.querySelector('.product-qty').textContent.replace('x', '').trim());
+                        const productPrice = parseFloat(item.querySelector('.product-price').textContent);
+
+                        products.push({
+                            product: productId,
+                            quantity: productQty,
+                            price: productPrice,
+                        });
+                    });
+
+                    const orderData = {
+                        selectedAddressId,
+                        paymentMethod,
+                        subtotal,
+                        products,
+                        discountedTotalElement
+                    };
+
+                    const response = await fetch('/placeOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(orderData),
+                    })
+                    const data = await response.json();
+
+                    if (data.cod) {
+                        window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
+                    } else if (data.cartChange === true) {
+                        window.location.href = '/cart';
+                    }
+                    else if (data.walletSuccess === true) {
+                        window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
+                    } else if (data.walletError) {
+                        showError("Insufficient balance in your wallet");
+                    }
+                    else {
+                        alert('online')
+                        console.log("RESPONSE", data.response);
+                        razorPayment(data.response,data.orderId);
+                    }
+
+
+
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+            function showError(errorMessage) {
+                // Display the error message
+                const errorMessageElement = document.getElementById("error-message");
+                errorMessageElement.innerHTML = errorMessage;
+                errorMessageElement.style.display = "block";
+
+                // Set a timer to hide the error message after 5 seconds
+                setTimeout(function () {
+                    errorMessageElement.style.display = "none";
+                }, 5000); // 5000 milliseconds = 5 seconds
+            }
+            function razorPayment(order,orderId) {
+                var options = {
+                    "key": "rzp_test_Kw27yGlNUVTAvZ", // Enter the Key ID generated from the Dashboard
+                    "amount": order.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                    "currency": "INR",
+                    "name": "Acme Corp",
+                    "description": "Test Transaction",
+                    "image": "https://example.com/your_logo",
+                    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                    "handler": function (response) {
+                        verifyPayment(response, order,orderId)
+                    },
+                    // "prefill": {
+                    //     "name": "Gaurav Kumar",
+                    //     "email": "gaurav.kumar@example.com",
+                    //     "contact": "9000090000"
+                    // },
+                    "notes": {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    },
+                    "modal": {
+                        ondismiss() {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                text: 'Your payment could not be processed.',
+                                confirmButtonText: 'OK',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "/paymentFailed"
+                                }
+                            });
+
+                        },
+                    },
+
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open()
+                // document.getElementById('rzp-button1').onclick = function (e) {
+                //     rzp1.open();
+                //     e.preventDefault();
+                // }
+            }
+            function verifyPayment(payment, order,orderId) {
+                $.ajax({
+                    url: '/verifyPayment',
+                    data: {
+                        payment,
+                        order: JSON.stringify(order)
+                    },
+                    method: 'POST',
+                    success: (response) => {
+                        if (response.status) {
+                            window.location.href = '/orderSuccess1?orderId=' + orderId; // use concatenation to include order ID
+                        } else {
+                            alert('Payment Failed')
+                        }
+                    }
+                })
+            }
+        });
+    </script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const couponDropdown = document.getElementById('couponDropdown');
+            const couponDetails = document.getElementById('couponDetails');
+
+            couponDropdown.addEventListener('change', function () {
+                const selectedCouponId = couponDropdown.value;
+
+
+                if (selectedCouponId) {
+                    // Make an AJAX request to fetch coupon details
+                    fetch(`/selectCoupon/${selectedCouponId}`) // Replace with your API endpoint
+                        .then(response => response.json())
+                        .then(couponDetailsData => {
+                            // Display coupon details in the couponDetails div
+                            couponDetails.innerHTML = `
+                            <h3>${couponDetailsData.code}</h3>
+                            <p class="font-weight-bold">${couponDetailsData.name}</p>
+                            <p class="font-weight-bold">${couponDetailsData.discountPercentage}% off upto Rs.${couponDetailsData.maxDiscountValue}</p>
+                            <!-- Add more coupon details as needed -->
+                        `;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching coupon details:', error);
+                        });
+                } else {
+                    // Clear the coupon details if no coupon is selected
+                    couponDetails.innerHTML = '';
+                }
+                // For demonstration purposes, we'll assume you have coupon details in a JavaScript object
+                const couponDetailsData = {
+                    code: 'COUPON_CODE',
+                    description: 'Coupon Description',
+                    discountPercent: 10,
+                    maxDiscount: 100,
+                    // Add other coupon details here
+                };
+
+                // Display coupon details in the couponDetails div
+                couponDetails.innerHTML = `
+                    <h3>${couponDetailsData.code}</h3>
+                    <p class="font-weight-bold">${couponDetailsData.description}</p>
+                    <p class="font-weight-bold">${couponDetailsData.discountPercent}% off upto Rs.${couponDetailsData.maxDiscount}</p>
+                    <!-- Add more coupon details as needed -->
+                `;
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const totalElement = document.getElementById('subtotalValue');
+    const applyCouponBtn = document.getElementById('applyCouponBtn');
+    const couponDropdown = document.getElementById('couponDropdown');
+    const discountedTotalRow = document.getElementById('discountedTotalRow');
+    const discountedTotalElement = document.getElementById('discountedTotal');
+    const discountAmountElement = document.getElementById('discountAmount');
+    const subtotalElement = document.getElementById('subtotalElement');
+
+    let subTotal = <%= subTotal %>;
+    
+
+    applyCouponBtn.addEventListener('click', function () {
+        const selectedCouponId = couponDropdown.value;
+        applyCoupon(selectedCouponId, subTotal);
+    });
+
+    async function applyCoupon(couponId, subTotal) {
+        try {
+            const response = await fetch(`/applyCoupon/${couponId}?subTotal=${subTotal}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ couponId }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const discountedTotal = data.discountedPrice;
+                const discount = data.discount;
+                subTotal = data.changedSubtotal;
+                updatedSubtotal = data.changedSubtotal;
+                updateTotalUI(discountedTotal, discount, subTotal);
+
+                console.log(discountedTotal, discount, subTotal)
+                discountedTotalRow.style.display = 'table-row';
+
+                discountedTotalElement.innerHTML = `${discount.toFixed(2)}`;
+                discountAmountElement.innerHTML = `${discount.toFixed(2)}`;
+                totalElement.innerHTML = `$${subTotal.toFixed(2)}`;
+
+                const couponDetailsElement = document.getElementById('couponDetails');
+                couponDetailsElement.innerHTML = `<p>Coupon Applied: ${data.couponName}</p>`;
+            } else {
+                showError(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function updateTotalUI(discountedTotal, discount, subTotal) {
+        const formattedTotal = discount ? `${discount.toFixed(2)}` : 'N/A';
+        discountedTotalElement.innerHTML = formattedTotal;
+
+        // Update the displayed subtotal
+        const subtotalValueElement = document.getElementById('subtotalValue');
+        subtotalValueElement.innerHTML = `$${subTotal.toFixed(2)}`;
+    }
+});
+
+
+
+</script>
+
+
+
+
+
+    <style>
+        .green-radio:checked+.form-check-label::before {
+            background-color: #4CAF50;
+        }
+    </style>
+    <%- include('footer') %>

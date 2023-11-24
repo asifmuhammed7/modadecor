@@ -1,0 +1,307 @@
+<%- include('header') %>
+
+<section class="pt-150 pb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="dashboard-menu">
+                    <ul class="nav flex-column" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link " id="dashboard-tab"  href="/userProfile"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/orders"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " id="address-tab" data-bs-toggle="tab" href="/myAddress" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Wallet</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="row mb-50 mt-20 order-info-wrap">
+                    <div class="col-md-6">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-person"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Customer</h6>
+                                <p class="mb-1">
+                                    <%= order.user.name %><br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template> <br> 
+                                </p>
+                                <a href="/userProfile">View profile</a>
+                            </div>
+                        </article>
+                    </div>
+                   
+                    <div class="col-md-6">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-place"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Deliver to</h6>
+                                <p class="mb-1">
+                                    <%= chosenAddress.name %><br>
+                                    <%= chosenAddress.address %><br>
+                                    <%= chosenAddress.district %><br>
+                                    <%= chosenAddress.city %><br>
+                                    <%= chosenAddress.pincode %><br>
+                                    <%= chosenAddress.phone %>                                    </p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                                        
+                        <% if (order.orderStatus === 'Delivered'||'Return') { %>
+                            <a class="btn btn-primary" href="/download-invoice/<%= order._id %>">Download Invoice</a>
+                          <% } %>
+                          
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="40%">Product</th>
+                                        <th width="20%">Unit Price</th>
+                                        <th width="20%">Quantity</th>
+                                        <th width="20%" class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% order.products.forEach(function(product) { %>
+                                        <tr>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="/admin/assets/productsImages/<%= product.product.image[0] %>" width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info"> <%= product.product.productName %> </div>
+                                                </a>
+                                            </td>
+                                            <td> <%= product.price %> </td>
+                                            <td> <%= product.quantity %> </td>
+                                            <td class="text-end"> <%= product.price * product.quantity %> </td>
+                                        </tr>
+                                    <% }); %>
+                                    <tr>
+                                        <input type="hidden" id="orderId" value="<%= order._id %>">
+
+                                        <td colspan="4">
+                                            <article class="float-end">
+                                                <dl class="dlist">
+                                                    <dt>Subtotal:</dt>
+                                                    <dd><%= order.grandTotal %></dd>
+                                                </dl>
+                                                
+                                                <dl class="dlist">
+                                                    <dt>Grand total:</dt>
+                                                    <dd> <b class="h5"><%= order.grandTotal %></b> </dd>
+                                                </dl>
+                                                <dl class="dlist">
+                                                    <dt class="text-muted">Status:</dt>
+                                                    <dd>
+                                                        <span class="badge rounded-pill alert-success text-success"><%= order.orderStatus %></span>
+                                                    </dd>
+                                                </dl>
+                                            </article>
+                                        </td>
+                                    </tr>                                </tbody>
+                            </table>
+                            <button id="cancelOrderBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal" style ="<%= (order.orderStatus === 'Placed' || order.orderStatus === 'Packed') ? 'display: block;' : 'display: none;' %>">Cancel Order</button>
+                            <button id="returnOrderBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#returnOrderModal" style ="<%= order.orderStatus === 'Delivered' ? 'display: block;' : 'display: none;' %>">Return Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this order?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelBtn">Confirm Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for Return Order -->
+<!-- Your modal HTML structure -->
+<div class="modal" id="returnOrderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Return Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Your existing content -->
+                <label for="returnReason">Reason for Return:</label>
+                <input type="text" id="returnReason" name="returnReason" placeholder="Enter reason for return">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmReturnBtn">Confirm Return</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+
+</section>
+<script src="path-to-bootstrap/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    var cancelOrderBtn = document.getElementById('cancelOrderBtn');
+var cancelModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+cancelOrderBtn.addEventListener('click', function () {
+    cancelModal.show();
+    document.body.style.overflow = 'hidden';
+});
+
+var confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+cancelModal._element.addEventListener('hidden.bs.modal', function () {
+    document.body.classList.remove('modal-open');
+    var modalBackdrops = document.querySelectorAll('.modal-backdrop');
+    modalBackdrops.forEach(function (backdrop) {
+        backdrop.parentNode.removeChild(backdrop);
+    });
+    document.body.style.overflow = 'auto';
+});
+
+confirmCancelBtn.addEventListener('click', function () {
+    var orderId = document.getElementById('orderId').value;
+
+    fetch('/updateOrder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            orderId: orderId,
+            newStatus: 'Cancelled',
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.reload();
+            } else {
+                cancelModal.hide();
+
+                var orderStatusElement = document.querySelector('.badge.rounded-pill.alert-success.text-success');
+                if (orderStatusElement) {
+                    orderStatusElement.textContent = 'Cancelled';
+                }
+
+                cancelOrderBtn.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while processing your request. Please try again.');
+        });
+})
+    
+    
+    
+var returnOrderBtn = document.getElementById('returnOrderBtn');
+var returnOrderModal = new bootstrap.Modal(document.getElementById('returnOrderModal'));
+
+returnOrderBtn.addEventListener('click', function () {
+    returnOrderModal.show();
+    document.body.style.overflow = 'hidden';
+});
+
+var confirmReturnBtn = document.getElementById('confirmReturnBtn');
+
+returnOrderModal._element.addEventListener('hidden.bs.modal', function () {
+    document.body.classList.remove('modal-open');
+    var modalBackdrops = document.querySelectorAll('.modal-backdrop');
+    modalBackdrops.forEach(function (backdrop) {
+        backdrop.parentNode.removeChild(backdrop);
+    });
+    document.body.style.overflow = 'auto';
+});
+
+confirmReturnBtn.addEventListener('click', function () {
+    var orderId = document.getElementById('orderId').value;
+    var returnReason = document.getElementById('returnReason').value;
+
+    // Use SweetAlert for a more user-friendly confirmation
+    Swal.fire({
+        title: 'Confirm Return',
+        text: 'Are you sure you want to return this order?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, return it!',
+        cancelButtonText: 'No, cancel!',
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            // User confirmed, proceed with the fetch request
+            fetch('/returnOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    orderId: orderId,
+                    newStatus: 'Return Pending',
+                    returnReason: returnReason,
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    returnOrderModal.hide();
+                    var orderStatusElement = document.querySelector('.badge.rounded-pill.alert-success.text-success');
+                    if (orderStatusElement) {
+                        orderStatusElement.textContent = 'Return Pending';
+                    }
+                    returnOrderBtn.style.display = 'none';
+                } else {
+                    alert('Failed to update order status. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('An error occurred while processing your request. Please try again.');
+            });
+        } else {
+            // User clicked cancel on SweetAlert
+            Swal.fire('Cancelled', 'The return process was cancelled.', 'info');
+        }
+    });
+});
+    </script>
+    <!-- Include SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+<%- include('footer') %>

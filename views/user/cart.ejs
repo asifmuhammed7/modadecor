@@ -1,0 +1,331 @@
+<%- include('header') %>
+
+  <main class="main">
+    <div class="page-header breadcrumb-wrap">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html" rel="nofollow">Home</a>
+          <span></span> Shop
+          <span></span> Your Cart
+        </div>
+      </div>
+    </div>
+    <section class="mt-50 mb-50">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <% if (cart.length> 0) { %>
+              <div class="table-responsive">
+                <table class="table shopping-summery text-center clean" id="cart">
+                  <thead>
+                    <tr class="main-heading">
+                      <th scope="col">Image</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col">Subtotal</th>
+                      <th scope="col">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% let grandTotal=0; %>
+                      <% for (let i=0; i < cart.length; i++) { %>
+                        <% const item=cart[i]; %>
+                          <% if (item.product) { %>
+                            <tr data-product-id="<%= item.product._id %>"
+                              data-max-quantity="<%= item.product.quantity %>">
+                              <td class="image product-thumbnail"><img
+                                  src="/admin/assets/productsImages/<%= item.product.image[0] %>" alt="#"></td>
+                              <td class="product-des product-name">
+                                <h5 class="product-name"><a href="shop-product-right.html">
+                                    <%= item.product.productName %>
+                                  </a></h5>
+                                <p class="font-xs">
+                                  <%= item.product.brandName %> distinguishes magnapibus.
+                                </p>
+                              </td>
+                              <td class="price" data-title="Price"><span>
+                                &#8377 <%= item.product.salePrice %>
+                                </span></td>
+                              <td class="text-center" data-title="Quantity">
+                                <div class="detail-qty border radius m-auto">
+                                  <a href="#" class="qty-down" data-item-id="<%= item.product._id %>"
+                                    data-action="decrement"><i class="fi-rs-angle-small-down"></i></a>
+                                  <span class="qty-val" data-quantity="<%= item.quantity %>">
+                                    <%= item.quantity %>
+                                  </span>
+                                  <a href="#" class="qty-up" data-item-id="<%= item.product._id %>"
+                                    data-action="increment"><i class="fi-rs-angle-small-up"></i></a>
+                                </div>
+                                <div id="error-message" class="error-message"></div>
+
+                              </td>
+                              <td class="text-right subtotal" data-title="Subtotal">
+                                <span class="subtotal-value"
+                                  data-subtotal="<%= parseFloat(item.product.regularPrice) * parseFloat(item.quantity) %>">
+                                  &#8377 <%= parseFloat(item.product.salePrice) * parseFloat(item.quantity) %>
+                                </span>
+                              </td>
+                              <td class="action" data-title="Remove">
+                                <!-- <a href="#" class="text-muted remove-item" data-item-id="<%= item.product._id %>"
+                                  data-bs-toggle="modal" data-bs-target="#confirmationModal" id="del">
+                                  <i class="fi-rs-trash"></i>
+                                </a> -->
+                                <button class="btn btn-primary btn-sm btn-rounded" onclick="dltItem('<%= item.product._id %>')"><i class="fi-rs-trash"></i></button>
+                              </td>
+
+                            </tr>
+                            <% grandTotal +=parseFloat(item.product.salePrice) * parseFloat(item.quantity); %>
+
+                              <% } %>
+                                <% } %>
+                  </tbody>
+                </table>
+              </div>
+
+              <% } else { %>
+                <!-- Handle the case when the cart is empty -->
+                <div class="text-center"><H3>Your cart is empty!</H3></div>
+                <% } %>
+          </div>
+        </div>
+        <div class="cart-action text-end">
+          <a href="shop" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+        </div>
+      </div>
+      <hr class="my-4 border-5 rounded-pill">
+      <% if(cart.length>0) { %>
+        <div class="container d-flex col-lg-6 col-md-12 justify-content-center align-item-center">
+          <div class="border p-md-4 p-30 border-radius cart-totals">
+            <div class="heading_s1 mb-3">
+              <h4>Cart Totals</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td class="cart_total_amount">
+                      <% if (grandTotal==='N/A' ) { %>
+                        <span class="font-lg fw-900 text-brand">N/A</span>
+                        <% } else { %>
+                          <strong><span class="font-xl fw-900 text-brand">
+                            &#8377 <%= grandTotal %>
+                            </span></strong>
+                          <% } %>
+                    </td>
+
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+            
+            <form action="/checkout?total=<%= grandTotal %>" method="post">
+              <% for (let i = 0; i < cart.length; i++) { %>
+                  <input type="hidden" name="productIds[]" value="<%- cart[i].product._id %>">
+              <% } %>
+              <button type="submit" class="btn">Proceed To CheckOut</button>
+          </form>
+          
+                   </div>
+        </div>
+        <% } %>
+          <div id="successMessageContainer"></div>
+
+          <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                  <!-- Error message will appear here -->
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to remove this item from the cart?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" id="confirmRemove" class="btn btn-primary"
+                    data-bs-dismiss="modal">Confirm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+  <script>
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function () {
+      $j(".qty-up, .qty-down").on("click", function (e) {
+        e.preventDefault();
+        const action = $j(this).data("action");
+        const itemId = $j(this).data("item-id");
+        const clickedElement = $j(this);
+
+        $j.ajax({
+          type: "GET",
+          url: `/updateCart?action=${action}&itemId=${itemId}`,
+          success: function (response) {
+            console.log('Response from server:', response);
+
+            const row = clickedElement.closest("tr");
+            if (response.error) {
+              const errorMessage = response.error;
+              const quantity = response.quantity;
+              const errorModalBody = document.getElementById('errorModalBody');
+              errorModalBody.textContent = errorMessage + " Quantity: " + quantity;
+              const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+              errorModal.show();
+              const itemId = response.itemId;
+              const affectedElement = $j(`[data-item-id="${itemId}"] .qty-val`);
+              affectedElement.text(quantity);
+              row.find(".qty-val").text(response.quantity);
+              return;
+            }
+            if (response.minerror) {
+              Swal.fire({
+                title: 'Delete Product',
+                text: 'Are you sure you want to delete this product from your cart?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  // User clicked "Yes, delete it," so proceed with the deletion action
+                  deleteAjax(response.itemId)
+                }
+              });
+              return
+            }
+
+            row.find(".qty-val").text(response.quantity);
+            const subtotalElement = row.find(".subtotal-value");
+            const subtotalValue = parseFloat(response.subtotal);
+
+            if (!isNaN(subtotalValue)) {
+              subtotalElement.text("₹" + subtotalValue.toFixed(2));
+              const grandTotal = calculateGrandTotal()
+              updateSubtotalAndTotal(grandTotal);
+            } else {
+              console.error("Invalid subtotal value received:", response.subtotal);
+            }
+            location.reload()
+          },
+          error: function (xhr, status, errorThrown) {
+            console.error("Error from server:", errorThrown);
+            const errorMessage = "An error occurred. Please try again later.";
+            // const errorModalBody = document.getElementById('errorModalBody');
+            // errorModalBody.textContent = errorMessage;
+
+            const confirmRemoveModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            confirmRemoveModal.show();
+          }
+        });
+      });
+
+      $j("#errorModal").on('hidden.bs.modal', function () {
+        location.reload(); // Reload the page on modal close
+      });
+      
+      $j('.remove-item').on('click', function (e) {
+        e.preventDefault();
+        const productId = $j(this).data('item-id');
+        console.log(productId);
+        const confirmButton = document.getElementById('confirmRemove');
+        confirmButton.onclick = deleteAjax(productId)
+      });
+
+      
+      // Function to calculate the grand total
+      function updateSubtotalAndTotal(grandTotal) {
+        const cartTotalElement = $j(".cart_total_amount"); // Use the class selector
+        const grandTotalElement = cartTotalElement.find(".font-xl");
+
+        if (grandTotal === 0) {
+          grandTotalElement.text("N/A");
+        } else {
+          grandTotalElement.text("₹" + grandTotal.toFixed(2)); // Format grand total
+        }
+      }
+      function calculateGrandTotal() {
+        let grandTotal = 0;
+        $j(".subtotal-value").each(function () {
+          const subtotalText = $j(this).text();
+          const subtotalValue = parseFloat(subtotalText.replace("₹", ""));
+          if (!isNaN(subtotalValue)) {
+            grandTotal += subtotalValue;
+          }
+        });
+        console.log(grandTotal)
+        return grandTotal;
+      }
+
+
+    });
+    function deleteAjax(productId) {
+
+// Perform AJAX request to remove the item
+$j.ajax({
+  type: 'POST',
+  url: `/removeItem/${productId}`,
+  success: function (response) {
+    console.log(response); // Log success message or handle as needed
+    const successMessageContainer = document.getElementById('successMessageContainer');
+    successMessageContainer.textContent = 'Item successfully removed from the cart.';
+    setTimeout(function () {
+      successMessageContainer.textContent = ''; // Clear the success message after 5 seconds
+    }, 5000);
+    location.reload(); // Reload the page after successful removal
+  },
+  error: function (xhr, status, errorThrown) {
+    console.error('Error from server:', errorThrown);
+    // Handle the error case, show an error message, or perform some action
+
+  }
+});
+};
+    function dltItem(id) {
+        Swal.fire({
+                title: 'Delete Product',
+                text: 'Are you sure you want to delete this product from your cart?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  // User clicked "Yes, delete it," so proceed with the deletion action
+                  deleteAjax(id)
+                }
+              });
+      }
+
+  </script>
+
+
+
+
+
+  <%- include('footer') %>

@@ -1,0 +1,131 @@
+<%- include('header') %>
+    <!-- Header part end-->
+
+
+    <!-- breadcrumb start-->
+    <!-- <section class="breadcrumb breadcrumb_bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="breadcrumb_iner">
+                        <div class="breadcrumb_iner_item">
+                            <h2>Tracking Order</h2>
+                            <p>Home <span>-</span> Tracking Order</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+    <!-- breadcrumb start-->
+
+    <!--================login_part Area =================-->
+    <<section class="login_part padding_top">
+        <div class="container">
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-6 col-md-4">
+                    <div class="login_part_form">
+                        <div class="login_part_form_iner">
+                            <h3>Welcome Back ! <br> Please Sign in now</h3>
+                            <% if (message) { %>
+                                <div class="alert alert-danger">
+                                    <%= message %>
+                                </div>
+                            <% } %>
+                            <form class="contact_form" action="login" method="post" novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="text" class="form-control" id="email" value="hijaaz@gmail.com" name="email" placeholder="Email">
+                                    <p id="emailError" style="color: red;"></p>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="password">Password:</label>
+                                    <input type="password" class="form-control" id="password" value="Hijaaz@123" name="password" placeholder="Password">
+                                    <p id="passwordError" style="color: red;"></p>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <button type="submit" value="submit" class="btn_3" onclick="validateForm(event)">
+                                        Log in
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            
+                            
+                            <!-- Create Account Link -->
+                            <a href="register" class="btn_3">Create an Account</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!--================login_part end =================-->
+
+ 
+    <script>
+        function validateForm(event) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            let isValid = true;
+    
+            if (email === '') {
+                emailError.textContent = 'Please enter your email.';
+                isValid = false;
+            } else {
+                emailError.textContent = '';
+            }
+    
+            if (password === '') {
+                passwordError.textContent = 'Please enter your password.';
+                isValid = false;
+            } else {
+                passwordError.textContent = '';
+            }
+    
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+    </script>
+    With t
+    
+
+    
+    <!-- jquery -->
+    <script src="js/jquery-1.12.1.min.js"></script>
+    <!-- popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- easing js -->
+    <script src="js/jquery.magnific-popup.js"></script>
+    <!-- swiper js -->
+    <script src="js/swiper.min.js"></script>
+    <!-- swiper js -->
+    <script src="js/masonry.pkgd.js"></script>
+    <!-- particles js -->
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <!-- slick js -->
+    <script src="js/slick.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/contact.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/mail-script.js"></script>
+    <script src="js/stellar.js"></script>
+    <script src="js/price_rangs.js"></script>
+    <!-- custom js -->
+    <script src="js/custom.js"></script>
+
+
+    <%- include('footer') %>
