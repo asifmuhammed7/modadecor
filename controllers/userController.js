@@ -123,9 +123,13 @@ const loadHome = async (req, res) => {
         // const product = await Products.find({ isDelete: false })
         const categories = await Category.find({ isDelete: false });
         
-        const filter = { isDelete: false,
-            category:{$in:categories.map(cat => cat._id)} };
+        const categoryIds = categories.map(cat => cat._id.toString());
+const filter = { isDelete: false, category: { $in: categoryIds } }
+
             const product = await Products.find(filter)  
+            console.log('Filter:', filter);
+            console.log('poducts', product);
+
         res.render('home', { product: product, Category: categories, user: user, banners });
     } catch (error) {
         console.log(error.message);
