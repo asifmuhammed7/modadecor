@@ -10,7 +10,7 @@ app.use(express.static('public'))
 
 const userRouter = require('./routes/userRouter')
 app.use('/',userRouter)
-
+ 
 const adminRouter = require('./routes/adminRouter')
 app.use('/admin',adminRouter)
 

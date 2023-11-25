@@ -90,7 +90,6 @@ const loadHome1 = async (req, res, next) => {
     try {
         const userId = req.session.user_id
         const user = await User.findById(userId)
-        // const product = await Products.find({ isDelete: false })
         const categories = await Category.find({ isDelete: false });
         const banners = await Banner.find({isActive:true})
 
@@ -259,16 +258,12 @@ const loadShop = async (req, res) => {
         }
 
         if (priceRange !== undefined) {
-            // Assuming priceRange is now a numeric value representing the upper limit
             const maxPrice = parseInt(priceRange);
 
-            // Check if maxPrice is a valid number
             if (!isNaN(maxPrice)) {
                 filter.salePrice = { $lte: maxPrice };
             } else {
-                // Handle the case where maxPrice is not a valid number
                 console.error('Invalid maxPrice:', req.query.priceRange);
-                // Provide a default value or handle the error accordingly
             }
         }
 
@@ -350,17 +345,7 @@ const userProfile = async (req, res) => {
     }
 }
 
-// const loadCheckout =async (req,res)=>{
-//     try{
-//         const userId = req.session.user_id
-//         const user = await User.findById({_id:userId})
 
-//         res.render('checkout',{user:user})
-//     }
-//     catch(error){
-//         console.log(error.message);
-//     }
-// }
 const searchProducts = async (req, res) => {
     try {
         const user = req.session.user_id;
