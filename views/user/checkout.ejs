@@ -37,10 +37,12 @@
                             </div>
                             <% }); %>
                                 <div class="mt-30">
-                                    <form action="addAddress" method="get" >
-                                        <button type="submit">Create New Address</button>
-                                    </form>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#createAddressModal">
+                                        Create New Address
+                                    </button>
                                 </div>
+
                     </div>
                     <div class="col-md-6">
                         <div class="order_review">
@@ -99,12 +101,16 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Total</th>
-                                                                            
-                                                                                <td class="product-subtotal" colspan="2" id="subtotalElement">
-                                                                                    <span class="font-xl text-brand fw-900" id="subtotalValue" ><%= subTotal %></span>
-                                                                                </td>
-                                                                            
-                                                                            
+
+                                                                            <td class="product-subtotal" colspan="2"
+                                                                                id="subtotalElement">
+                                                                                <span class="font-xl text-brand fw-900"
+                                                                                    id="subtotalValue">
+                                                                                    <%= subTotal %>
+                                                                                </span>
+                                                                            </td>
+
+
                                                                         </tr>
                                         </tbody>
                                     </table>
@@ -183,6 +189,40 @@
                     </div>
                 </div>
             </div>
+            <div class="modal" tabindex="-1" role="dialog" id="createAddressModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Create New Address</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="newAddressForm">
+
+                                <label for="newName">Name:</label>
+                                <input type="text" id="newName" name="newName" required>
+
+                                <label for="newAddress">Address:</label>
+                                <input type="text" id="newAddress" name="newAddress" required>
+
+                                <label for="newDistrict">District:</label>
+                                <input type="text" id="newDistrict" name="newDistrict" required>
+
+                                <label for="newCity">City:</label>
+                                <input type="text" id="newCity" name="newCity" required>
+
+                                <label for="newPincode">Pincode:</label>
+                                <input type="number" id="newPincode" name="newPincode" required>
+
+                                <label for="newPhone">Phone Number:</label>
+                                <input type="number" id="newPhone" name="newPhone" required>
+
+                                <button type="button" class="btn btn-primary" onclick="addNewAddress()">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="modal" tabindex="-1" role="dialog" id="addressModal">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -204,173 +244,173 @@
 
     <script>
         let updatedSubtotal = <%= subTotal %>
-        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {
 
-            const placeOrderButton = document.getElementById("placeOrderButton");
+                const placeOrderButton = document.getElementById("placeOrderButton");
 
-            if (placeOrderButton) {
-                placeOrderButton.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    placeOrder();
-                });
-            }
-
-            async function placeOrder() {
-                try {
-
-                    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-
-                    if (!selectedAddress) {
-                        const modal = new bootstrap.Modal(document.getElementById('addressModal'));
-                        modal.show();
-                        return;
-                    }
-
-
-                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-                    const subtotalElement = document.getElementById('subtotalValue');
-                    const discountedTotalElement = document.getElementById('discountedTotal').innerHTML;
-    console.log('Discounted Total Element:', discountedTotalElement);
-
-         
-        const subtotal = updatedSubtotal
-        
-                    const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').getAttribute('data-address-id');
-                    console.log(selectedAddressId);
-
-
-                    const cartItems = document.querySelectorAll('.cart-item');
-                    const products = [];
-
-                    cartItems.forEach(item => {
-                        const productId = item.getAttribute('data-product-id');
-                        const productQty = parseInt(item.querySelector('.product-qty').textContent.replace('x', '').trim());
-                        const productPrice = parseFloat(item.querySelector('.product-price').textContent);
-
-                        products.push({
-                            product: productId,
-                            quantity: productQty,
-                            price: productPrice,
-                        });
+                if (placeOrderButton) {
+                    placeOrderButton.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        placeOrder();
                     });
-
-                    const orderData = {
-                        selectedAddressId,
-                        paymentMethod,
-                        subtotal,
-                        products,
-                        discountedTotalElement
-                    };
-
-                    const response = await fetch('/placeOrder', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(orderData),
-                    })
-                    const data = await response.json();
-
-                    if (data.cod) {
-                        window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
-                    } else if (data.cartChange === true) {
-                        window.location.href = '/cart';
-                    }
-                    else if (data.walletSuccess === true) {
-                        window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
-                    } else if (data.walletError) {
-                        showError("Insufficient balance in your wallet");
-                    }
-                    else {
-                        alert('online')
-                        console.log("RESPONSE", data.response);
-                        razorPayment(data.response,data.orderId);
-                    }
-
-
-
-                } catch (error) {
-                    console.error('Error:', error);
                 }
-            }
-            function showError(errorMessage) {
-                // Display the error message
-                const errorMessageElement = document.getElementById("error-message");
-                errorMessageElement.innerHTML = errorMessage;
-                errorMessageElement.style.display = "block";
 
-                // Set a timer to hide the error message after 5 seconds
-                setTimeout(function () {
-                    errorMessageElement.style.display = "none";
-                }, 5000); // 5000 milliseconds = 5 seconds
-            }
-            function razorPayment(order,orderId) {
-                var options = {
-                    "key": "rzp_test_Kw27yGlNUVTAvZ", // Enter the Key ID generated from the Dashboard
-                    "amount": order.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                    "currency": "INR",
-                    "name": "Acme Corp",
-                    "description": "Test Transaction",
-                    "image": "https://example.com/your_logo",
-                    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                    "handler": function (response) {
-                        verifyPayment(response, order,orderId)
-                    },
-                    // "prefill": {
-                    //     "name": "Gaurav Kumar",
-                    //     "email": "gaurav.kumar@example.com",
-                    //     "contact": "9000090000"
-                    // },
-                    "notes": {
-                        "address": "Razorpay Corporate Office"
-                    },
-                    "theme": {
-                        "color": "#3399cc"
-                    },
-                    "modal": {
-                        ondismiss() {
+                async function placeOrder() {
+                    try {
 
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Payment Failed',
-                                text: 'Your payment could not be processed.',
-                                confirmButtonText: 'OK',
-                                allowOutsideClick: false
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "/paymentFailed"
-                                }
-                            });
+                        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
 
-                        },
-                    },
-
-                };
-                var rzp1 = new Razorpay(options);
-                rzp1.open()
-                // document.getElementById('rzp-button1').onclick = function (e) {
-                //     rzp1.open();
-                //     e.preventDefault();
-                // }
-            }
-            function verifyPayment(payment, order,orderId) {
-                $.ajax({
-                    url: '/verifyPayment',
-                    data: {
-                        payment,
-                        order: JSON.stringify(order)
-                    },
-                    method: 'POST',
-                    success: (response) => {
-                        if (response.status) {
-                            window.location.href = '/orderSuccess1?orderId=' + orderId; // use concatenation to include order ID
-                        } else {
-                            alert('Payment Failed')
+                        if (!selectedAddress) {
+                            const modal = new bootstrap.Modal(document.getElementById('addressModal'));
+                            modal.show();
+                            return;
                         }
+
+
+                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                        const subtotalElement = document.getElementById('subtotalValue');
+                        const discountedTotalElement = document.getElementById('discountedTotal').innerHTML;
+                        console.log('Discounted Total Element:', discountedTotalElement);
+
+
+                        const subtotal = updatedSubtotal
+
+                        const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').getAttribute('data-address-id');
+                        console.log(selectedAddressId);
+
+
+                        const cartItems = document.querySelectorAll('.cart-item');
+                        const products = [];
+
+                        cartItems.forEach(item => {
+                            const productId = item.getAttribute('data-product-id');
+                            const productQty = parseInt(item.querySelector('.product-qty').textContent.replace('x', '').trim());
+                            const productPrice = parseFloat(item.querySelector('.product-price').textContent);
+
+                            products.push({
+                                product: productId,
+                                quantity: productQty,
+                                price: productPrice,
+                            });
+                        });
+
+                        const orderData = {
+                            selectedAddressId,
+                            paymentMethod,
+                            subtotal,
+                            products,
+                            discountedTotalElement
+                        };
+
+                        const response = await fetch('/placeOrder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(orderData),
+                        })
+                        const data = await response.json();
+
+                        if (data.cod) {
+                            window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
+                        } else if (data.cartChange === true) {
+                            window.location.href = '/cart';
+                        }
+                        else if (data.walletSuccess === true) {
+                            window.location.href = `/orderSuccess1?orderId=${data.savedOrder._id}`;
+                        } else if (data.walletError) {
+                            showError("Insufficient balance in your wallet");
+                        }
+                        else {
+                            alert('online')
+                            console.log("RESPONSE", data.response);
+                            razorPayment(data.response, data.orderId);
+                        }
+
+
+
+                    } catch (error) {
+                        console.error('Error:', error);
                     }
-                })
-            }
-        });
+                }
+                function showError(errorMessage) {
+                    // Display the error message
+                    const errorMessageElement = document.getElementById("error-message");
+                    errorMessageElement.innerHTML = errorMessage;
+                    errorMessageElement.style.display = "block";
+
+                    // Set a timer to hide the error message after 5 seconds
+                    setTimeout(function () {
+                        errorMessageElement.style.display = "none";
+                    }, 5000); // 5000 milliseconds = 5 seconds
+                }
+                function razorPayment(order, orderId) {
+                    var options = {
+                        "key": "rzp_test_Kw27yGlNUVTAvZ", // Enter the Key ID generated from the Dashboard
+                        "amount": order.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "currency": "INR",
+                        "name": "Acme Corp",
+                        "description": "Test Transaction",
+                        "image": "https://example.com/your_logo",
+                        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                        "handler": function (response) {
+                            verifyPayment(response, order, orderId)
+                        },
+                        // "prefill": {
+                        //     "name": "Gaurav Kumar",
+                        //     "email": "gaurav.kumar@example.com",
+                        //     "contact": "9000090000"
+                        // },
+                        "notes": {
+                            "address": "Razorpay Corporate Office"
+                        },
+                        "theme": {
+                            "color": "#3399cc"
+                        },
+                        "modal": {
+                            ondismiss() {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Payment Failed',
+                                    text: 'Your payment could not be processed.',
+                                    confirmButtonText: 'OK',
+                                    allowOutsideClick: false
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "/paymentFailed"
+                                    }
+                                });
+
+                            },
+                        },
+
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open()
+                    // document.getElementById('rzp-button1').onclick = function (e) {
+                    //     rzp1.open();
+                    //     e.preventDefault();
+                    // }
+                }
+                function verifyPayment(payment, order, orderId) {
+                    $.ajax({
+                        url: '/verifyPayment',
+                        data: {
+                            payment,
+                            order: JSON.stringify(order)
+                        },
+                        method: 'POST',
+                        success: (response) => {
+                            if (response.status) {
+                                window.location.href = '/orderSuccess1?orderId=' + orderId; // use concatenation to include order ID
+                            } else {
+                                alert('Payment Failed')
+                            }
+                        }
+                    })
+                }
+            });
     </script>
     <script>
 
@@ -422,73 +462,136 @@
         });
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const totalElement = document.getElementById('subtotalValue');
-    const applyCouponBtn = document.getElementById('applyCouponBtn');
-    const couponDropdown = document.getElementById('couponDropdown');
-    const discountedTotalRow = document.getElementById('discountedTotalRow');
-    const discountedTotalElement = document.getElementById('discountedTotal');
-    const discountAmountElement = document.getElementById('discountAmount');
-    const subtotalElement = document.getElementById('subtotalElement');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const totalElement = document.getElementById('subtotalValue');
+            const applyCouponBtn = document.getElementById('applyCouponBtn');
+            const couponDropdown = document.getElementById('couponDropdown');
+            const discountedTotalRow = document.getElementById('discountedTotalRow');
+            const discountedTotalElement = document.getElementById('discountedTotal');
+            const discountAmountElement = document.getElementById('discountAmount');
+            const subtotalElement = document.getElementById('subtotalElement');
 
-    let subTotal = <%= subTotal %>;
-    
+            let subTotal = <%= subTotal %>;
 
-    applyCouponBtn.addEventListener('click', function () {
-        const selectedCouponId = couponDropdown.value;
-        applyCoupon(selectedCouponId, subTotal);
-    });
 
-    async function applyCoupon(couponId, subTotal) {
-        try {
-            const response = await fetch(`/applyCoupon/${couponId}?subTotal=${subTotal}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ couponId }),
+            applyCouponBtn.addEventListener('click', function () {
+                const selectedCouponId = couponDropdown.value;
+                applyCoupon(selectedCouponId, subTotal);
             });
 
-            const data = await response.json();
+            async function applyCoupon(couponId, subTotal) {
+                try {
+                    const response = await fetch(`/applyCoupon/${couponId}?subTotal=${subTotal}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ couponId }),
+                    });
 
-            if (data.success) {
-                const discountedTotal = data.discountedPrice;
-                const discount = data.discount;
-                subTotal = data.changedSubtotal;
-                updatedSubtotal = data.changedSubtotal;
-                updateTotalUI(discountedTotal, discount, subTotal);
+                    const data = await response.json();
 
-                console.log(discountedTotal, discount, subTotal)
-                discountedTotalRow.style.display = 'table-row';
+                    if (data.success) {
+                        const discountedTotal = data.discountedPrice;
+                        const discount = data.discount;
+                        subTotal = data.changedSubtotal;
+                        updatedSubtotal = data.changedSubtotal;
+                        updateTotalUI(discountedTotal, discount, subTotal);
 
-                discountedTotalElement.innerHTML = `${discount.toFixed(2)}`;
-                discountAmountElement.innerHTML = `${discount.toFixed(2)}`;
-                totalElement.innerHTML = `$${subTotal.toFixed(2)}`;
+                        console.log(discountedTotal, discount, subTotal)
+                        discountedTotalRow.style.display = 'table-row';
 
-                const couponDetailsElement = document.getElementById('couponDetails');
-                couponDetailsElement.innerHTML = `<p>Coupon Applied: ${data.couponName}</p>`;
-            } else {
-                showError(data.message);
+                        discountedTotalElement.innerHTML = `${discount.toFixed(2)}`;
+                        discountAmountElement.innerHTML = `${discount.toFixed(2)}`;
+                        totalElement.innerHTML = `$${subTotal.toFixed(2)}`;
+
+                        const couponDetailsElement = document.getElementById('couponDetails');
+                        couponDetailsElement.innerHTML = `<p>Coupon Applied: ${data.couponName}</p>`;
+                    } else {
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
 
-    function updateTotalUI(discountedTotal, discount, subTotal) {
-        const formattedTotal = discount ? `${discount.toFixed(2)}` : 'N/A';
-        discountedTotalElement.innerHTML = formattedTotal;
+            function updateTotalUI(discountedTotal, discount, subTotal) {
+                const formattedTotal = discount ? `${discount.toFixed(2)}` : 'N/A';
+                discountedTotalElement.innerHTML = formattedTotal;
 
-        // Update the displayed subtotal
-        const subtotalValueElement = document.getElementById('subtotalValue');
-        subtotalValueElement.innerHTML = `$${subTotal.toFixed(2)}`;
-    }
-});
+                // Update the displayed subtotal
+                const subtotalValueElement = document.getElementById('subtotalValue');
+                subtotalValueElement.innerHTML = `$${subTotal.toFixed(2)}`;
+            }
+        });
 
 
 
-</script>
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Declare addNewAddress in the global scope
+            window.addNewAddress = async function () {
+                const newName = document.getElementById("newName").value;
+                const newAddress = document.getElementById("newAddress").value;
+                const newDistrict = document.getElementById("newDistrict").value;
+                const newCity = document.getElementById("newCity").value;
+                const newPincode = document.getElementById("newPincode").value;
+                const newPhone = document.getElementById("newPhone").value;
+
+                const newAddressObject = {
+                    name: newName,
+                    address: newAddress,
+                    district: newDistrict,
+                    city: newCity,
+                    pincode: newPincode,
+                    phone: newPhone,
+                };
+
+                try {
+                    const response = await fetch('/addAddress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newAddressObject),
+                    });
+
+                    if (response.ok) {
+                        console.log('Page will reload.');
+                        window.location.reload();
+                        closeModal();
+
+                        window.location.reload()
+                        closeModal();
+                    } else {
+                        console.error('Failed to save new address');
+                        // Handle error cases more explicitly
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Handle network errors or other issues
+                }
+            };
+
+            const addAddressButton = document.getElementById("addAddressButton");
+
+            if (addAddressButton) {
+                addAddressButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addNewAddress();
+                });
+            }
+
+            function closeModal() {
+                const modal = new bootstrap.Modal(document.getElementById('createAddressModal'));
+                modal.hide();
+            }
+        });
+
+    </script>
 
 
 

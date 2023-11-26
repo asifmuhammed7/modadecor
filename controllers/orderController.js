@@ -55,16 +55,15 @@ const loadAddAddress = async (req, res) => {
 }
 const addAddress = async (req, res) => {
     try {
-        const userId = req.session.user_id
-        const user = await User.findById(userId).populate('cart.product')
-
-        const addressData = req.body
-        user.address.push(addressData)
-        await user.save()
-        res.redirect('/checkout')
-    }
-    catch (error) {
-        console.log(error.message);
+        const userId = req.session.user_id;
+        const user = await User.findById(userId);
+        const addressData = req.body;
+        user.address.push(addressData);
+        await user.save();
+        res.status(201).json({ success: true, newAddress: addressData });
+    } catch (error) {
+        console.error('Error creating address:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 }
 const createAddress = async (req, res) => {
